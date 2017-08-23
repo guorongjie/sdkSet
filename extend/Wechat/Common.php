@@ -65,10 +65,10 @@ class Common{
      */
     public function get_access_token(){
         //判断是否过了缓存期
-       /* if(cache('access_token')){
+        if(cache('access_token')){
             $this->access_token = cache('access_token');
             return cache('access_token');
-        }*/
+        }
 
         $url = "https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid={$this->appid}&secret={$this->appsecret}";
         $return = $this->httpRequest($url,'GET');

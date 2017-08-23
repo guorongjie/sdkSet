@@ -57,13 +57,6 @@ class WechatUser extends Common{
     const BACKLIST_DEL_URL = '/tags/members/batchunblacklist?';
 
 
-    public function location($lng, $lat)
-    {
-        $url = 'http://restapi.amap.com/v3/geocode/regeo?key=&';
-        $url = $url.'location='.$lng . ','. $lat;
-        $result = $this->httpRequest($url);
-        return $result;
-    }
     /**
      * 批量获取关注粉丝列表
      * @param string $next_openid
