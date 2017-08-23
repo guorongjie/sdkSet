@@ -32,13 +32,13 @@ class WechatPay extends Common{
      */
     public function __construct() {
         /** 公众号appid */
-        $this->appid = config('APPID01');
+        $this->appid = '';
 
         /** 商户身份ID */
-        $this->mch_id = config('MCH_ID01');
+        $this->mch_id = '';
 
         /** 商户支付密钥Key */
-        $this->partnerKey = config('WX_KEY01');
+        $this->partnerKey = '';
 
         /** 证书路径 */
         $this->ssl_cer = config('SSLCERT_PATH01');

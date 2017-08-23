@@ -11,8 +11,8 @@ class Wechat {
      * @var string|WechatReceive
      * 这里作为微信公众号的消息入口（包括绑定入口）。用户在公众号发送的消息，微信服务器会推送到这里（index）.这个类可迁到开发的请求控制器中
      */
-    private $WechatReceive = '';//
-    private $WechatOauth = '';//
+    private $WechatReceive = '';//消息实例
+    private $WechatOauth = '';//授权实例
     private $FromUserName = '';//消息发送者
     private $ToUserName = '';  //消息接受者
     private $MsgType = '';  //接收消息的类型
