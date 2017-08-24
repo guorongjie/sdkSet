@@ -26,7 +26,9 @@
         "topthink/think-worker": "^1.0",
         "topthink/think-helper": "^1.0",
         "topthink/think-queue": "^1.0",
-        "topthink/think-angular": "^1.0"
+        "topthink/think-angular": "^1.0",
+        "riverslei/payment": "^4.0",
+        "phpoffice/phpexcel": "^1.8"
     },
     "extra": {
         "think-path": "thinkphp"

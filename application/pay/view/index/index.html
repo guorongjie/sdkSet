@@ -3,10 +3,41 @@
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
+    <script src="http://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+
 </head>
 <body>
+<p>微信</p>
 <p><a href="{:url('scanQr')}"> 微信扫码支付</a></p>
-<!--<p><a href="{:url('createMenu')}"> 生成公众号菜单</a></p>-->
-<!--<p><a href="{:url('getUserLists')}"> 批量获取关注粉丝列表</a></p>-->
+<p><a href="{:url('queryOrder')}"> 微信订单查询</a></p>
+<p><a href="{:url('refund')}"> 微信订单退款</a></p>
+<p><a href="{:url('transfers')}"> 微信企业付款</a></p>
+<p>支付宝：</p>
+<p><a href="{:url('pay')}"> 支付宝即时到账</a></p>
+<p><a href="{:url('Alitransfer')}"> 支付宝转账</a></p>
+<p><a href="{:url('AliQueryTransfer')}"> 支付宝转账查询</a></p>
+<p><a href="#" onclick="scene()"> 条码支付</a><input name="bar_code" type="text"></p>
 </body>
+<script type="text/javascript">
+    function scene() {
+        var bar_code = $("input[name='bar_code']").val();
+        if (bar_code == '') {
+            alert('请输入条码');
+            return;
+        }
+        $.ajax({
+            type: "POST",
+            url: "{:url('scene')}",
+            data: {"bar_code": bar_code},
+            async: false,
+            error: function (request) {
+                alert("服务器繁忙, 请联系管理员!");
+                return;
+            },
+            success: function (v) {
+                console.log(v);
+            }
+        });
+    }
+</script>
 </html>

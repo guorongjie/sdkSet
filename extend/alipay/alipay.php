@@ -24,7 +24,7 @@ class alipay{
      * @param $subject
      * @return mixed
      */
-    public function pay($out_trade_no, $total_amount, $subject)
+    public function pay($out_trade_no, $total_amount, $subject='测试')
     {
         $url='https://openapi.alipay.com/gateway.do';
         //业务参数
@@ -40,9 +40,53 @@ class alipay{
             'sign_type'=>'RSA',
             'timestamp'=>date('Y-m-d H:i:s',time()),
             'version'=>'1.0',
+            'qr_pay_mode'=>'1',
         );
         //获取签名
         $data['sign'] = $this->sign($data);
+        //发送请求
+        $result =  $this->curl($url,$data);
+
+//        $result =  $this->httpRequest($url, 'POST', $data);
+        //结果
+//        $result = json_decode($result,true);
+
+        return $result;
+    }
+    /**
+     * 即时到账
+     * @param $out_trade_no
+     * @param $total_amount
+     * @param $subject
+     * @return mixed
+     */
+    public function payOld($out_trade_no, $total_amount, $subject='测试')
+    {
+        $url='https://openapi.alipay.com/gateway.do';
+        $biz_content = array('out_trade_no'=>$out_trade_no,'total_fee'=>$total_amount,'subject'=>$subject, 'payment_type'=>1, 'seller_id'=>'2088911435959170' ,'qr_pay_mode'=>'2'
+);
+        //公共参数
+        $data = array(
+            'service'=>'create_direct_pay_by_user',
+            'partner'=>'',
+            '_input_charset'=>'UTF-8',
+            'sign_type'=>'RSA',
+            'biz_content'=>json_encode($biz_content),
+        );
+        $data2 =  array(
+            'service'=>'create_direct_pay_by_user',
+            'partner'=>'',
+            '_input_charset'=>'UTF-8',
+            'qr_pay_mode'=>'2',
+            'out_trade_no'=>$out_trade_no,
+            'total_fee'=>$total_amount,
+            'subject'=>$subject,
+            'payment_type'=>1,
+            'seller_id'=>''
+        );
+        ksort($data2);
+        //获取签名
+        $data['sign'] = $this->sign($data2);
         //发送请求
         $result =  $this->curl($url,$data);
 
@@ -192,6 +236,35 @@ class alipay{
         $data['sign'] = $this->sign($data);
         //发送请求
         $result =  $this->curl($url,$data);
+        //结果
+        $result = json_decode($result,true);
+
+        return $result;
+    }
+
+    public function scene($out_biz_no, $auth_code, $total_amount,  $subject='测试')
+    {
+        $url='https://openapi.alipay.com/gateway.do';
+        //业务参数
+        $biz_content = array('out_biz_no'=>$out_biz_no, 'total_amount'=>$total_amount, 'scene'=>'bar_code','$auth_code'=>$auth_code, 'subject'=>$subject);
+        ksort($biz_content);
+        $biz_content =json_encode($biz_content);//转换为json
+        //公共参数
+        $data = array(
+            'app_id'=>$this->_appid,
+            'biz_content'=>$biz_content,
+            'charset'=>'utf-8',
+            'method'=>'alipay.trade.pay',
+            'sign_type'=>'RSA',
+            'timestamp'=>date('Y-m-d H:i:s',time()),
+            'version'=>'1.0',
+        );
+        //获取签名
+        $data['sign'] = $this->sign($data);
+        //发送请求
+        $result =  $this->curl($url,$data);
+
+//        $result =  $this->httpRequest($url, 'POST', $data);
         //结果
         $result = json_decode($result,true);
 

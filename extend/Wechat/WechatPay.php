@@ -1,26 +1,31 @@
 <?php
-
+/**
+ * 微信支付接口
+ *
+ */
 namespace Wechat;
 
-use Wechat\Common;
-use \think\helper;
 class WechatPay extends Common{
+    /**
+     * 使用说明：
+     * 一、先配置好：$appid，$mch_id，$partnerKey。如果要用到 退款，企业付款等需要证书的接口，则需要配置 $ssl_cer, $ssl_key
+     */
 
     /** 支付接口基础地址 */
     const MCH_BASE_URL = 'https://api.mch.weixin.qq.com';
 
     /** 公众号appid */
-    public $appid ;
+    public $appid = '';
 
     /** 商户身份ID */
-    public $mch_id ;
+    public $mch_id = '';
 
     /** 商户支付密钥Key */
-    public $partnerKey;
+    public $partnerKey = '';
 
     /** 证书路径 */
-    public $ssl_cer ;
-    public $ssl_key ;
+    public $ssl_cer = EXTEND_PATH . 'wechat' .'cert' . '/apiclient_cert.pem';
+    public $ssl_key = EXTEND_PATH . 'wechat' .'cert' .  '/apiclient_key.pem';
 
     /** 执行错误消息及代码 */
     public $errMsg;
@@ -31,20 +36,12 @@ class WechatPay extends Common{
      * @param array $options
      */
     public function __construct() {
-        /** 公众号appid */
+        parent::__construct();
         $this->appid = '';
-
-        /** 商户身份ID */
         $this->mch_id = '';
-
-        /** 商户支付密钥Key */
         $this->partnerKey = '';
-
-        /** 证书路径 */
-        $this->ssl_cer = config('SSLCERT_PATH01');
-        $this->ssl_key = config('SSLKEY_PATH01');
-
     }
+
 
     /**
      * 设置标配的请求参数，生成签名，生成接口参数xml
@@ -89,7 +86,8 @@ class WechatPay extends Common{
      * @param string $url
      * @param string $method
      * @return array
-     */    public function getArrayResult($data, $url, $method = 'postXml') {
+     */
+    public function getArrayResult($data, $url, $method = 'postXml') {
         return $this->xml2arr($this->$method($data, $url));
     }
 
@@ -117,34 +115,7 @@ class WechatPay extends Common{
         return $result;
     }
 
-    /**
-     * 支付通知验证处理
-     * @return bool|array
-     */
-    public function getNotify() {
-        $notifyInfo = (array)simplexml_load_string(file_get_contents("php://input"), 'SimpleXMLElement', LIBXML_NOCDATA);
-        if (empty($notifyInfo)) {
 
-            $this->errCode = '404';
-            $this->errMsg = 'Payment notification forbidden access.';
-            return false;
-        }
-        if (empty($notifyInfo['sign'])) {
-            $this->errCode = '403';
-            $this->errMsg = 'Payment notification signature is missing.';
-            return false;
-        }
-        $data = $notifyInfo;
-        unset($data['sign']);
-        if ($notifyInfo['sign'] !== Tools::getPaySign($data, $this->partnerKey)) {
-            $this->errCode = '403';
-            $this->errMsg = 'Payment signature verification failed.';
-            return false;
-        }
-        $this->errCode = '0';
-        $this->errMsg = '';
-        return $notifyInfo;
-    }
 
 
     /**
@@ -208,7 +179,7 @@ class WechatPay extends Common{
             "total_fee"        => $total_fee,
             "notify_url"       => $notify_url,
             "trade_type"       => 'NATIVE',
-            "spbill_create_ip" => Tools::getAddress()
+            "spbill_create_ip" => $this->getAddress()
         );
         empty($goods_tag) || $postdata['goods_tag'] = $goods_tag;
         empty($openid) || $postdata['openid'] = $openid;
@@ -221,19 +192,31 @@ class WechatPay extends Common{
 
     /**
      * 获取支付规二维码
-     * @param string $product_id 商户定义的商品id 或者订单号
-     * @return string
+     * @param string $openid 用户openid，JSAPI必填
+     * @param string $body 商品标题
+     * @param string $out_trade_no 第三方订单号
+     * @param int $total_fee 订单总价
+     * @param string $notify_url 支付成功回调地址
+     * @param string $goods_tag 商品标记，代金券或立减优惠功能的参数
+     * @return bool|string
+
      */
-    public function getQrcPayUrl($product_id) {
-        $data = array(
-            'appid'      => $this->appid,
-            'mch_id'     => $this->mch_id,
-            'time_stamp' => (string)time(),
-            'nonce_str'  => $this->createNoncestr(),
-            'product_id' => (string)$product_id,
+    public function getQrcPayUrl($body, $out_trade_no, $total_fee, $notify_url, $goods_tag = null) {
+        $postdata = array(
+            "body"             => $body,
+            "out_trade_no"     => $out_trade_no,
+            "total_fee"        => $total_fee,
+            "notify_url"       => $notify_url,
+            "trade_type"       => 'NATIVE',
+            "spbill_create_ip" => $this->getAddress()
         );
-        $data['sign'] = $this->getPaySign($data, $this->partnerKey);
-        return "weixin://wxpay/bizpayurl?" . http_build_query($data);
+        empty($goods_tag) || $postdata['goods_tag'] = $goods_tag;
+        empty($openid) || $postdata['openid'] = $openid;
+        $result = $this->getArrayResult($postdata, self::MCH_BASE_URL . '/pay/unifiedorder');
+        if (false === $this->_parseResult($result) || empty($result['prepay_id'])) {
+            return false;
+        }
+        return $result['code_url'];
     }
 
 
@@ -251,6 +234,22 @@ class WechatPay extends Common{
         $option["signType"] = "MD5";
         $option["paySign"] = $this->getPaySign($option, $this->partnerKey);
         $option['timestamp'] = $option['timeStamp'];
+        return $option;
+    }
+    /**
+     * 创建APP支付参数包
+     * @param string $prepay_id
+     * @return array
+     */
+    public function createAppPay($prepay_id) {
+        $option = array();
+        $option["appId"] = $this->appid;
+        $option["partnerid"] = $this->partnerKey;
+        $option["timeStamp"] = (string)time();
+        $option["nonceStr"] =  $this->createNoncestr();
+        $option["package"] = "Sign=WXPay";
+        $option["prepayid"] = $prepay_id;
+        $option["paySign"] = $this->getPaySign($option, $this->partnerKey);
         return $option;
     }
 
@@ -430,7 +429,6 @@ class WechatPay extends Common{
         $data['desc'] = $desc; //备注信息
         $result = $this->postXmlSSL($data, self::MCH_BASE_URL . '/mmpaymkttransfers/promotion/transfers');
         $json = $this->xml2arr($result);
-        file_put_contents('gpay2.txt', $json);
         if (!empty($json) && false === $this->_parseResult($json)) {
             return false;
         }
@@ -500,5 +498,23 @@ class WechatPay extends Common{
             return false;
         }
         return $json;
+    }
+    /**
+     * 读取微信客户端IP
+     * @return null|string
+     */
+     public function getAddress() {
+        foreach (array('HTTP_X_FORWARDED_FOR', 'HTTP_CLIENT_IP', 'HTTP_X_CLIENT_IP', 'HTTP_X_CLUSTER_CLIENT_IP', 'REMOTE_ADDR') as $header) {
+            if (!isset($_SERVER[$header]) || ($spoof = $_SERVER[$header]) === NULL) {
+                continue;
+            }
+            sscanf($spoof, '%[^,]', $spoof);
+            if (!filter_var($spoof, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4)) {
+                $spoof = NULL;
+            } else {
+                return $spoof;
+            }
+        }
+        return '0.0.0.0';
     }
 }
