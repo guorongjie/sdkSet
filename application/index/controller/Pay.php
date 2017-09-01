@@ -1,5 +1,5 @@
 <?php
-namespace app\pay\controller;
+namespace app\index\controller;
 
 use alipay\alipay;
 use Amap\WebService;
@@ -9,7 +9,7 @@ use Wechat\WechatOauth;
 use Wechat\WechatPay;
 use Wechat\WechatUser;
 
-class Index extends Controller
+class Pay extends Controller
 {
     public function index()
     {
@@ -24,9 +24,6 @@ class Index extends Controller
         vendor("phpqrcode.phpqrcode");
         $wxPay = new WechatPay();
         $result = $wxPay->getQrcPayUrl('测试', '2015478517781254333412', 1, 'http://www.baidu.com');
-        if ($result['return_code'] == 'FAIL') {
-            var_dump($result);exit;
-        }
         echo \QRcode::png($result);exit;
    }
 

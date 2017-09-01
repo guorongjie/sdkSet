@@ -37,9 +37,9 @@ class WechatPay extends Common{
      */
     public function __construct() {
         parent::__construct();
-        $this->appid = '';
-        $this->mch_id = '';
-        $this->partnerKey = '';
+        $this->appid = wxpay_appid();
+        $this->mch_id = wxpay_mch_id();
+        $this->partnerKey = wxpay_key();
     }
 
 

@@ -23,7 +23,7 @@ class Common{
     public $access_token = ''; //公众号access_token
     public $wechat_config ;
 
-    public $debug = false;//是否开启调试
+    public $debug = true;//是否开启调试
 
     public function __construct()
     {

@@ -6,7 +6,7 @@ use Wechat\WechatMenu;
 use Wechat\WechatOauth;
 use Wechat\WechatUser;
 
-class Index extends Controller
+class Wechat extends Controller
 {
     public function index(){
         return $this->fetch();

@@ -1,12 +1,12 @@
 <?php
-namespace app\phpexcel\controller;
+namespace app\index\controller;
 
 use think\Controller;
 use Wechat\WechatMenu;
 use Wechat\WechatOauth;
 use Wechat\WechatUser;
 
-class Index extends Controller
+class Phpexcel extends Controller
 {
     public function index(){
         return $this->fetch();
@@ -14,6 +14,7 @@ class Index extends Controller
 
     public function out()
     {
+//        vendor("phpexcel.PHPExcel");//当composer失效时可以使用此方法引入
         $objPHPExcel = new \PHPExcel();
         $objSheet = $objPHPExcel->getActiveSheet();
         $objSheet ->setTitle("demo");//可以给sheet设置名称为"demo"
