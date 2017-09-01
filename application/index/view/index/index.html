@@ -7,19 +7,29 @@
 
 </head>
 <body>
-<p>微信</p>
-<p><a href="{:url('scanQr')}"> 微信扫码支付</a></p>
-<p><a href="{:url('queryOrder')}"> 微信订单查询</a></p>
-<p><a href="{:url('refund')}"> 微信订单退款</a></p>
-<p><a href="{:url('transfers')}"> 微信企业付款</a></p>
-<p><a href="{:url('location')}"> gg</a></p>
+<p>微信公众号</p>
+<p><a href="{:url('@wechat/Index/getAccessToken')}"> 获取公众号access_token</a></p>
+<p><a href="{:url('@wechat/Index/createMenu')}"> 生成公众号菜单</a></p>
+<p><a href="{:url('@wechat/Index/getUserLists')}"> 批量获取关注粉丝列表</a></p>
+<p>微信支付</p>
+<p><a href="{:url('@pay/Index/scanQr')}"> 微信扫码支付</a></p>
+<p><a href="{:url('@pay/Index/queryOrder')}"> 微信订单查询</a></p>
+<p><a href="{:url('@pay/Index/refund')}"> 微信订单退款</a></p>
+<p><a href="{:url('@pay/Index/transfers')}"> 微信企业付款</a></p>
 <p>支付宝：</p>
-<p><a href="{:url('pay')}"> 支付宝即时到账</a></p>
-<p><a href="{:url('Alitransfer')}"> 支付宝转账</a></p>
-<p><a href="{:url('AliQueryTransfer')}"> 支付宝转账查询</a></p>
+<p><a href="{:url('@pay/Index/pay')}"> 支付宝即时到账</a></p>
+<p><a href="{:url('@pay/Index/Alitransfer')}"> 支付宝转账</a></p>
+<p><a href="{:url('@pay/Index/AliQueryTransfer')}"> 支付宝转账查询</a></p>
 <p><a href="#" onclick="scene()"> 条码支付</a><input name="bar_code" type="text"></p>
+<p>excel导出</p>
+<p><a href="{:url('@phpexcel/Index/out')}"> 导出</a></p>
+<p>高德地图</p>
+<p><a href="{:url('@pay/Index/location')}">ip地址-->地理地址</a></p>
+
+
 </body>
 <script type="text/javascript">
+    /*条码支付*/
     function scene() {
         var bar_code = $("input[name='bar_code']").val();
         if (bar_code == '') {
@@ -40,5 +50,7 @@
             }
         });
     }
+    /*end--条码支付*/
+
 </script>
 </html>

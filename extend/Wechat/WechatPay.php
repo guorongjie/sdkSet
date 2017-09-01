@@ -157,6 +157,9 @@ class WechatPay extends Common{
         empty($openid) || $postdata['openid'] = $openid;
         $result = $this->getArrayResult($postdata, self::MCH_BASE_URL . '/pay/unifiedorder');
         if (false === $this->_parseResult($result)) {
+            if ($this->debug) {
+                return $result;
+            }
             return false;
         }
         return in_array($trade_type, array('JSAPI', 'APP')) ? $result['prepay_id'] : $result['code_url'];
@@ -185,13 +188,16 @@ class WechatPay extends Common{
         empty($openid) || $postdata['openid'] = $openid;
         $result = $this->getArrayResult($postdata, self::MCH_BASE_URL . '/pay/unifiedorder');
         if (false === $this->_parseResult($result) || empty($result['prepay_id'])) {
+            if ($this->debug) {
+                return $result;
+            }
             return false;
         }
         return $result['prepay_id'];
     }
 
     /**
-     * 获取支付规二维码
+     * 获取支付二维码
      * @param string $openid 用户openid，JSAPI必填
      * @param string $body 商品标题
      * @param string $out_trade_no 第三方订单号
@@ -214,6 +220,9 @@ class WechatPay extends Common{
         empty($openid) || $postdata['openid'] = $openid;
         $result = $this->getArrayResult($postdata, self::MCH_BASE_URL . '/pay/unifiedorder');
         if (false === $this->_parseResult($result) || empty($result['prepay_id'])) {
+            if ($this->debug) {
+                return $result;
+            }
             return false;
         }
         return $result['code_url'];
@@ -262,6 +271,9 @@ class WechatPay extends Common{
         $data = array('out_trade_no' => $out_trade_no);
         $result = $this->getArrayResult($data, self::MCH_BASE_URL . '/pay/closeorder');
         if (false === $this->_parseResult($result)) {
+            if ($this->debug) {
+                return $result;
+            }
             return false;
         }
         return ($result['return_code'] === 'SUCCESS');
@@ -276,6 +288,9 @@ class WechatPay extends Common{
         $data = array('out_trade_no' => $out_trade_no);
         $result = $this->getArrayResult($data, self::MCH_BASE_URL . '/pay/orderquery');
         if (false === $this->_parseResult($result)) {
+            if ($this->debug) {
+                return $result;
+            }
             return false;
         }
         return $result;
@@ -306,6 +321,9 @@ class WechatPay extends Common{
         !empty($refund_account) && $data['refund_account'] = $refund_account;
         $result = $this->getArrayResult($data, self::MCH_BASE_URL . '/secapi/pay/refund', 'postXmlSSL');
         if (false === $this->_parseResult($result)) {
+            if ($this->debug) {
+                return $result;
+            }
             return false;
         }
         return ($result['return_code'] === 'SUCCESS');
@@ -321,6 +339,9 @@ class WechatPay extends Common{
         $data['out_trade_no'] = $out_trade_no;
         $result = $this->getArrayResult($data, self::MCH_BASE_URL . '/pay/refundquery');
         if (false === $this->_parseResult($result)) {
+            if ($this->debug) {
+                return $result;
+            }
             return false;
         }
         return $result;
@@ -339,6 +360,9 @@ class WechatPay extends Common{
         $result = $this->postXml($data, self::MCH_BASE_URL . '/pay/downloadbill');
         $json =  $this->xml2arr($result);
         if (!empty($json) && false === $this->_parseResult($json)) {
+            if ($this->debug) {
+                return $json;
+            }
             return false;
         }
         return $json;
@@ -385,6 +409,9 @@ class WechatPay extends Common{
         $result = $this->postXmlSSL($data, $api);
         $json =  $this->xml2arr($result);
         if (!empty($json) && false === $this->_parseResult($json)) {
+            if ($this->debug) {
+                return $json;
+            }
             return false;
         }
         return $json;
@@ -403,6 +430,9 @@ class WechatPay extends Common{
         $result = $this->postXmlSSL($data, self::MCH_BASE_URL . '/mmpaymkttransfers/gethbinfo');
         $json =  $this->xml2arr($result);
         if (!empty($json) && false === $this->_parseResult($json)) {
+            if ($this->debug) {
+                return $json;
+            }
             return false;
         }
         return $json;
@@ -430,6 +460,9 @@ class WechatPay extends Common{
         $result = $this->postXmlSSL($data, self::MCH_BASE_URL . '/mmpaymkttransfers/promotion/transfers');
         $json = $this->xml2arr($result);
         if (!empty($json) && false === $this->_parseResult($json)) {
+            if ($this->debug) {
+                return $json;
+            }
             return false;
         }
         return $json;
@@ -448,6 +481,9 @@ class WechatPay extends Common{
         $result = $this->postXmlSSL($data, self::MCH_BASE_URL . '/mmpaymkttransfers/gettransferinfo');
         $json =  $this->xml2arr($result);
         if (!empty($json) && false === $this->_parseResult($json)) {
+            if ($this->debug) {
+                return $json;
+            }
             return false;
         }
         return $json;
@@ -465,11 +501,17 @@ class WechatPay extends Common{
         if (!$result || $result['return_code'] !== 'SUCCESS') {
             $this->errCode = $result['return_code'];
             $this->errMsg = $result['return_msg'];
+            if ($this->debug) {
+                return $result;
+            }
             return false;
         }
         if (isset($result['err_code']) && $result['err_code'] !== 'SUCCESS') {
             $this->errMsg = $result['err_code_des'];
             $this->errCode = $result['err_code'];
+            if ($this->debug) {
+                return $result;
+            }
             return false;
         }
         return $result['short_url'];
@@ -495,6 +537,9 @@ class WechatPay extends Common{
         $result = $this->postXmlSSL($data, self::MCH_BASE_URL . '/mmpaymkttransfers/send_coupon');
         $json =  $this->xml2arr($result);
         if (!empty($json) && false === $this->_parseResult($json)) {
+            if ($this->debug) {
+                return $result;
+            }
             return false;
         }
         return $json;

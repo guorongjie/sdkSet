@@ -2,6 +2,7 @@
 namespace app\pay\controller;
 
 use alipay\alipay;
+use Amap\WebService;
 use think\Controller;
 use Wechat\WechatMenu;
 use Wechat\WechatOauth;
@@ -23,6 +24,9 @@ class Index extends Controller
         vendor("phpqrcode.phpqrcode");
         $wxPay = new WechatPay();
         $result = $wxPay->getQrcPayUrl('测试', '2015478517781254333412', 1, 'http://www.baidu.com');
+        if ($result['return_code'] == 'FAIL') {
+            var_dump($result);exit;
+        }
         echo \QRcode::png($result);exit;
    }
 
@@ -97,4 +101,6 @@ class Index extends Controller
         $result = $aliPay->scene('14848915156165653333544', $bar_code,0.1);
         echo json_encode($result);
     }
+
+
 }

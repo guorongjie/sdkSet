@@ -23,7 +23,7 @@ class Common{
     public $access_token = ''; //公众号access_token
     public $wechat_config ;
 
-
+    public $debug = false;//是否开启调试
 
     public function __construct()
     {
@@ -53,8 +53,8 @@ class Common{
     public function setConfigByCode()
     {
         $this->wechat_config = array(
-            'appid' => '',
-            'appsecret' =>''
+            'appid' => wx_appid(),
+            'appsecret' =>wx_appsecret()
 
         );
     }
@@ -65,10 +65,10 @@ class Common{
      */
     public function get_access_token(){
         //判断是否过了缓存期
-        if(cache('access_token')){
+        /*if(cache('access_token')){
             $this->access_token = cache('access_token');
             return cache('access_token');
-        }
+        }*/
 
         $url = "https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid={$this->appid}&secret={$this->appsecret}";
         $return = $this->httpRequest($url,'GET');

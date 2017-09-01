@@ -10,7 +10,7 @@
  * @return string
  */
 function wx_appid(){
-    return 'wx718b48048450240e';
+    return '';
 }
 
 /**
@@ -18,5 +18,5 @@ function wx_appid(){
  * @return string
  */
 function wx_appsecret(){
-    return '776545aaguohong518aijia518202717';
+    return '';
 }
