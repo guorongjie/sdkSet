@@ -10,7 +10,7 @@
  * @return string
  */
 function wx_appid(){
-    return '';
+    return 'dsad';
 }
 
 /**
